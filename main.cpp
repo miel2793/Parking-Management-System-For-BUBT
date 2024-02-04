@@ -1,4 +1,6 @@
 #include <iostream>
+#include<windows.h>
+#include<unistd.h>
 #include <stdlib.h>
 #include "sqlite3.h"
 
@@ -10,21 +12,64 @@ sqlite3 *db_obj;
 sqlite3_stmt *stmt;
 int res;
 
-///Function Declaretion ///
+///Function Declaration ///
 
 void Connection_check();
 void Create_Table();
 int Get_intput();
+void Entry();
 
 ///Main Function Starts Here.......///
 
+int optn;
 int main()
 {
-    int optn;
-    optn=Get_intput();
-    system("cls");
-    cout<<optn;
     Connection_check();
+    while(1)
+    {
+        optn=Get_intput();
+        if(optn==6)
+        {
+            return 0 ;
+        }
+        if(optn==1)
+        {
+            Entry();
+        }
+        else if(optn==2)
+        {
+            cout<<"Vehicle Exit\n";
+            break; /// apatoto break
+        }
+        else if(optn==3)
+        {
+            cout<<"Search Vehicle\n";
+            break; /// apatoto break
+        }
+        else if(optn==4)
+        {
+            cout<<"Check Space Availability\n";
+            break; /// apatoto break
+        }
+        else if(optn==5)
+        {
+            cout<<"github/////link pore diboni\n";
+            break; /// apatoto break
+        }
+        else if(optn==6)
+        {
+            cout<<"Thanks for using Our Services\n";
+            break; /// apatoto break
+        }
+        else
+        {
+            system("cls");
+            cout<<"\t\tInvalid Input\n";
+            Sleep(4000);
+            system("cls");
+        }
+    }
+
     sqlite3_close(db_obj);
     return 0;
 }
@@ -33,7 +78,7 @@ void Connection_check()
 {
     if(sqlite3_open("entry.db",&db_obj)==SQLITE_OK)
     {
-        //  cout<<"DB Connected !!\n";
+        //cout<<"DB Connected !!\n";
         Create_Table();
     }
     else
@@ -54,16 +99,34 @@ void Create_Table()
 
 int Get_intput()
 {
+    system("cls");
     cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
     cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
     cout<<"\t\t1.Vehicle Entry\n";
     cout<<"\t\t2.Vehicle Exit\n";
     cout<<"\t\t3.Search Vehicle\n";
-    cout<<"\t\t4.Check Space Availablity\n";
-    cout<<"\t\t5.Visit Github repository\n";
+    cout<<"\t\t4.Check Space Availability\n";
+    cout<<"\t\t5.Visit Git-hub repository\n";
     cout<<"\t\t6.Exit\n";
     cout<<"\n\t\tChoose an Option:";
     int x;
     cin>>x;
+    cin.ignore();
     return x;
+}
+void Entry()
+{
+    system("cls");
+    cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+
+    long long ID;
+    string v_num;
+    cout<<"\t\tEnter Student ID:";
+    cin>>ID;
+    cin.ignore();
+    cout<<"\t\tEnter Vehicle Number:";
+    getline(cin,v_num);
+    cout<<"\t\tYou Are Ready to Park Your Car.....";
+    Sleep(4000);
 }
