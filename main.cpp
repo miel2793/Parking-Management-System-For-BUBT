@@ -18,7 +18,7 @@ void Connection_check();
 void Create_Table();
 int Get_intput();
 void Entry();
-
+void Exit();
 ///Main Function Starts Here.......///
 
 int optn;
@@ -38,8 +38,7 @@ int main()
         }
         else if(optn==2)
         {
-            cout<<"Vehicle Exit\n";
-            break; /// apatoto break
+           Exit();
         }
         else if(optn==3)
         {
@@ -73,6 +72,7 @@ int main()
     sqlite3_close(db_obj);
     return 0;
 }
+///Main Function Ends Here.......///
 
 void Connection_check()
 {
@@ -108,7 +108,7 @@ int Get_intput()
     cout<<"\t\t4.Check Space Availability\n";
     cout<<"\t\t5.Visit Git-hub repository\n";
     cout<<"\t\t6.Exit\n";
-    cout<<"\n\t\tChoose an Option:";
+    cout<<"\n\t\t>";
     int x;
     cin>>x;
     cin.ignore();
@@ -129,4 +129,25 @@ void Entry()
     getline(cin,v_num);
     cout<<"\t\tYou Are Ready to Park Your Car.....";
     Sleep(4000);
+}
+void Exit()
+{
+    system("cls");
+    cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+
+    long long otp;
+    cout<<"\t\tEnter Your OTP:";
+    cin>>otp;
+    cin.ignore();
+    if(otp==10)
+    {
+        cout<<"\t\tOTP Matched !";
+    }
+    else
+    {
+        cout<<"\t\tWrong OTP!";
+    }
+    Sleep(4000);
+
 }
