@@ -1,5 +1,7 @@
 #include <iostream>
 #include<windows.h>
+#include <cstdlib>
+#include <time.h>
 #include<unistd.h>
 #include <stdlib.h>
 #include "sqlite3.h"
@@ -11,6 +13,7 @@ using namespace std;
 sqlite3 *db_obj;
 sqlite3_stmt *stmt;
 int res;
+long long otp_main;
 
 ///Function Declaration ///
 
@@ -28,17 +31,13 @@ int main()
     while(1)
     {
         optn=Get_intput();
-        if(optn==6)
-        {
-            return 0 ;
-        }
         if(optn==1)
         {
             Entry();
         }
         else if(optn==2)
         {
-           Exit();
+            Exit();
         }
         else if(optn==3)
         {
@@ -64,7 +63,7 @@ int main()
         {
             system("cls");
             cout<<"\t\tInvalid Input\n";
-            Sleep(4000);
+            Sleep(3000);
             system("cls");
         }
     }
@@ -127,8 +126,11 @@ void Entry()
     cin.ignore();
     cout<<"\t\tEnter Vehicle Number:";
     getline(cin,v_num);
+    srand(time(0));
+    otp_main=rand()+119;
+    cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
     cout<<"\t\tYou Are Ready to Park Your Car.....";
-    Sleep(4000);
+    Sleep(5000);
 }
 void Exit()
 {
@@ -136,13 +138,14 @@ void Exit()
     cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
     cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
 
-    long long otp;
+    long long otp_to_out;
     cout<<"\t\tEnter Your OTP:";
-    cin>>otp;
+    cin>>otp_to_out;
     cin.ignore();
-    if(otp==10)
+    if(otp_to_out==otp_main)
     {
         cout<<"\t\tOTP Matched !";
+        otp_main=-1;
     }
     else
     {
