@@ -13,13 +13,18 @@ using namespace std;
 sqlite3 *db_obj;
 sqlite3_stmt *stmt;
 int res;
+/// Global Variables ////
+long long ID;
+string v_num;
 long long otp_main;
+int vh_count_total=0;
 
 ///Function Declaration ///
 
 void Connection_check();
 void Create_Table();
 int Get_intput();
+void Find_Vehicle();
 void Entry();
 void Exit();
 ///Main Function Starts Here.......///
@@ -41,8 +46,7 @@ int main()
         }
         else if(optn==3)
         {
-            cout<<"Search Vehicle\n";
-            break; /// apatoto break
+            Find_Vehicle();
         }
         else if(optn==4)
         {
@@ -113,14 +117,40 @@ int Get_intput()
     cin.ignore();
     return x;
 }
+void Find_Vehicle()
+{
+    string vh_num_check;
+    long long st_id_check;
+    cout<<"\t\tEnter Vehicle Number :";
+    getline(cin,vh_num_check);
+    cin.ignore();
+    if(vh_num_check==v_num)
+    {
+        cout<<"\t\tEnter Student ID :";
+        cin>>st_id_check;
+        cin.ignore();
+        if(st_id_check==ID)
+        {
+            cout<<"\t\tVehicle Found !";
+        }
+        else
+        {
+            cout<<"\t\tStudent ID Not Matched !";
+        }
+    }
+    else
+    {
+        cout<<"\t\tVehicle Not Found";
+    }
+    Sleep(2000);
+
+}
 void Entry()
 {
     system("cls");
     cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
     cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
 
-    long long ID;
-    string v_num;
     cout<<"\t\tEnter Student ID:";
     cin>>ID;
     cin.ignore();
@@ -129,6 +159,7 @@ void Entry()
     srand(time(0));
     otp_main=rand()+119;
     cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
+    vh_count_total++;
     cout<<"\t\tYou Are Ready to Park Your Car.....";
     Sleep(5000);
 }
@@ -146,11 +177,12 @@ void Exit()
     {
         cout<<"\t\tOTP Matched !";
         otp_main=-1;
+        vh_count_total--;
     }
     else
     {
         cout<<"\t\tWrong OTP!";
     }
-    Sleep(4000);
+    Sleep(2000);
 
 }
