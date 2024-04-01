@@ -32,6 +32,7 @@ void Exit();
 int optn;
 int main()
 {
+    //system("COLOR ");
     Connection_check();
     while(1)
     {
@@ -55,7 +56,13 @@ int main()
         }
         else if(optn==5)
         {
-            cout<<"github/////link pore diboni\n";
+            #ifdef _WIN32
+                system("start https://github.com/anas20023/Parking-Management-System-For-BUBT");
+            #elif __linux__
+                system("xdg-open https://github.com/anas20023/Parking-Management-System-For-BUBT");
+            #else
+                cout << "Unsupported platform" << endl;
+            #endif
             break; /// apatoto break
         }
         else if(optn==6)
@@ -66,7 +73,7 @@ int main()
         else
         {
             system("cls");
-            cout<<"\t\tInvalid Input\n";
+            cout<<"\t\tInvalid Input";
             Sleep(3000);
             system("cls");
         }
@@ -81,7 +88,7 @@ void Connection_check()
 {
     if(sqlite3_open("entry.db",&db_obj)==SQLITE_OK)
     {
-        //cout<<"DB Connected !!\n";
+       // cout<<"DB Connected !!\n";
         Create_Table();
     }
     else
@@ -91,7 +98,7 @@ void Connection_check()
 }
 void Create_Table()
 {
-    res=sqlite3_prepare_v2(db_obj,"CREATE TABLE IF NOT EXISTS entry(name varchar(50),id INT ,token INT , email varchar(80));",-1,&stmt,NULL);
+    res=sqlite3_prepare_v2(db_obj,"CREATE TABLE IF NOT EXISTS entry(carnum VARCHAR(100),id INT ,token INT , intake INT);",-1,&stmt,NULL);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     if(res!=SQLITE_OK)
@@ -157,7 +164,7 @@ void Entry()
     cout<<"\t\tEnter Vehicle Number:";
     getline(cin,v_num);
     srand(time(0));
-    otp_main=rand()+119;
+    otp_main=rand()+119 + rand();
     cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
     vh_count_total++;
     cout<<"\t\tYou Are Ready to Park Your Car.....";
