@@ -1,10 +1,12 @@
 # depslib dependency file v1.0
-1710815089 source:d:\cse\semester 2\sdp-i\project\parking management system for bubt\main.cpp
+1712562722 source:d:\cse\semester 2\sdp-i\project\parking management system for bubt\main.cpp
 	<iostream>
 	<windows.h>
 	<cstdlib>
+	<iomanip>
 	<time.h>
 	<unistd.h>
+	<string>
 	<stdlib.h>
 	"sqlite3.h"
 

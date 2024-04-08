@@ -1,8 +1,10 @@
 #include <iostream>
 #include<windows.h>
 #include <cstdlib>
+#include<iomanip>
 #include <time.h>
 #include<unistd.h>
+#include<string>
 #include <stdlib.h>
 #include "sqlite3.h"
 
@@ -27,6 +29,11 @@ int Get_intput();
 void Find_Vehicle();
 void Entry();
 void Exit();
+void Wrong_Number_as_Input();
+void Get_data_intodb();
+void Check_For_Vehicle(string vh_num_check, long long st_otp_check);
+void Forgot_Token();
+void Find_token(string fg_vh_name, long long fg_id);
 ///Main Function Starts Here.......///
 
 int optn;
@@ -51,31 +58,33 @@ int main()
         }
         else if(optn==4)
         {
-            cout<<"Check Space Availability\n";
-            break; /// apatoto break
+            Forgot_Token();
+            Sleep(4000);
         }
-        else if(optn==5)
+        else if(optn==5) /// Git-hub link Visit
         {
-            #ifdef _WIN32
-                system("start https://github.com/anas20023/Parking-Management-System-For-BUBT");
-            #elif __linux__
-                system("xdg-open https://github.com/anas20023/Parking-Management-System-For-BUBT");
-            #else
-                cout << "Unsupported platform" << endl;
-            #endif
-            break; /// apatoto break
+#ifdef _WIN32
+            system("start https://github.com/anas20023/Parking-Management-System-For-BUBT");
+#elif __linux__
+            system("xdg-open https://github.com/anas20023/Parking-Management-System-For-BUBT");
+#else
+            cout << "Unsupported platform" << endl;
+#endif
+            system("cls");
         }
         else if(optn==6)
         {
-            cout<<"Thanks for using Our Services\n";
-            break; /// apatoto break
+            system("cls");
+            cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+            cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+            cout<<"\t\tThanks for using Our Services";
+            Sleep(5000);
+            break;
+
         }
-        else
+        else /// Wrong Input
         {
-            system("cls");
-            cout<<"\t\tInvalid Input";
-            Sleep(3000);
-            system("cls");
+            Wrong_Number_as_Input();
         }
     }
 
@@ -86,9 +95,9 @@ int main()
 
 void Connection_check()
 {
-    if(sqlite3_open("entry.db",&db_obj)==SQLITE_OK)
+    if(sqlite3_open("data.db",&db_obj)==SQLITE_OK)
     {
-       // cout<<"DB Connected !!\n";
+        // cout<<"DB Connected !!\n";
         Create_Table();
     }
     else
@@ -98,7 +107,7 @@ void Connection_check()
 }
 void Create_Table()
 {
-    res=sqlite3_prepare_v2(db_obj,"CREATE TABLE IF NOT EXISTS entry(carnum VARCHAR(100),id INT ,token INT , intake INT);",-1,&stmt,NULL);
+    res=sqlite3_prepare_v2(db_obj,"CREATE TABLE IF NOT EXISTS entry(car_num VARCHAR(100),id INT ,token INT);",-1,&stmt,NULL);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     if(res!=SQLITE_OK)
@@ -106,7 +115,6 @@ void Create_Table()
         cout<<"Error !!"<<sqlite3_errmsg(db_obj);
     }
 }
-
 int Get_intput()
 {
     system("cls");
@@ -115,7 +123,7 @@ int Get_intput()
     cout<<"\t\t1.Vehicle Entry\n";
     cout<<"\t\t2.Vehicle Exit\n";
     cout<<"\t\t3.Search Vehicle\n";
-    cout<<"\t\t4.Check Space Availability\n";
+    cout<<"\t\t4.Forgot Token Number ?\n";
     cout<<"\t\t5.Visit Git-hub repository\n";
     cout<<"\t\t6.Exit\n";
     cout<<"\n\t\t>";
@@ -127,30 +135,14 @@ int Get_intput()
 void Find_Vehicle()
 {
     string vh_num_check;
-    long long st_id_check;
+    long long st_otp_check;
+    cout<<"\t\tEnter Token Number :";
+    cin>>st_otp_check;
+    cin.ignore();
     cout<<"\t\tEnter Vehicle Number :";
     getline(cin,vh_num_check);
-    cin.ignore();
-    if(vh_num_check==v_num)
-    {
-        cout<<"\t\tEnter Student ID :";
-        cin>>st_id_check;
-        cin.ignore();
-        if(st_id_check==ID)
-        {
-            cout<<"\t\tVehicle Found !";
-        }
-        else
-        {
-            cout<<"\t\tStudent ID Not Matched !";
-        }
-    }
-    else
-    {
-        cout<<"\t\tVehicle Not Found";
-    }
-    Sleep(2000);
-
+    Check_For_Vehicle(vh_num_check,st_otp_check);
+    Sleep(5000);
 }
 void Entry()
 {
@@ -168,6 +160,7 @@ void Entry()
     cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
     vh_count_total++;
     cout<<"\t\tYou Are Ready to Park Your Car.....";
+    Get_data_intodb();
     Sleep(5000);
 }
 void Exit()
@@ -179,17 +172,104 @@ void Exit()
     long long otp_to_out;
     cout<<"\t\tEnter Your OTP:";
     cin>>otp_to_out;
-    cin.ignore();
-    if(otp_to_out==otp_main)
+    cout<<"\t\t Your Token : "<<otp_to_out<<endl;
+    Sleep(2000);
+
+}
+void Wrong_Number_as_Input()
+{
+    system("cls");
+    cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+    cout<<"\t\tInvalid Input\n";
+    cout<<"\t\tPlease Enter a Number Between [ 1 - 6 ] !!!";
+    Sleep(2000);
+    system("cls");
+}
+void Get_data_intodb()
+{
+    /// -------------------------------------------------------
+
+    res=sqlite3_prepare_v2(db_obj,"INSERT INTO entry(car_num,id,token) VALUES(?,?,?);",-1,&stmt,NULL);
+    sqlite3_bind_text(stmt, 1, v_num.c_str(), v_num.length(), SQLITE_TRANSIENT);
+    sqlite3_bind_int64(stmt, 2, ID);
+    sqlite3_bind_int(stmt,3,otp_main);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if(res!=SQLITE_OK)
     {
-        cout<<"\t\tOTP Matched !";
-        otp_main=-1;
-        vh_count_total--;
+        cout<<"Error !!"<<sqlite3_errmsg(db_obj);
+    }
+    otp_main=-1;
+    ID=-1;
+    v_num=" ";
+
+    ///--------------------------------------------------------
+}
+void Check_For_Vehicle(string vh_num_check, long long st_otp_check)
+{
+    const char* sql = "SELECT car_num , id FROM entry WHERE car_num = ? AND token = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
     }
     else
     {
-        cout<<"\t\tWrong OTP!";
-    }
-    Sleep(2000);
+        sqlite3_bind_text(stmt, 1, vh_num_check.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int64(stmt, 2, st_otp_check);
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+        {
+            cout<<"\n\t\t Your Vehicle Number :" << sqlite3_column_text(stmt, 0) << "\n\t\t Your Student ID :" << sqlite3_column_int64(stmt, 1);
+            cout<< "\n\t\t Your Vehicle Exists In Parking";
+        }
+        else
+        {
+            cout<< "\n\t\t Your Vehicle Is Not Exist In Parking";
+        }
 
+        sqlite3_finalize(stmt);
+    }
+}
+void Forgot_Token()
+{
+    system("cls");
+    cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout<<"\t\t\t\t\t    Parking Management System\n\n\n\n";
+    string fg_vh_name;
+    long long fg_id;
+    cout<<"\t\tEnter Student ID :";
+    cin>>fg_id;
+    cin.ignore();
+    cout<<"\t\tEnter Vehicle Number :";
+    getline(cin,fg_vh_name);
+    Find_token(fg_vh_name,fg_id);
+
+}
+void Find_token(string fg_vh_name, long long fg_id)
+{
+    const char* sql = "SELECT car_num , token FROM entry WHERE car_num = ? AND id = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        sqlite3_bind_text(stmt, 1, fg_vh_name.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_int64(stmt, 2, fg_id);
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+        {
+            cout<<"\n\t\t Your Vehicle Number :" << sqlite3_column_text(stmt, 0) << "\n\t\t Your Token Number :" << sqlite3_column_int64(stmt, 1);
+            cout<< "\n\t\t NOTE YOUR TOKEN NUMBER WELL !!!";
+        }
+        else
+        {
+            cout<< "\n\t\t Your Did not Parked !!";
+        }
+
+        sqlite3_finalize(stmt);
+    }
 }
