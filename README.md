@@ -7,3 +7,5 @@
 ### Kaniz Fatema Sadia <br>
 ### Mubashsher Salek <br>
 ### Anas Ibn Belal<br> 
+# Files Needed To Setup The Project into Another PC : 
+https://shorturl.at/jlxTW
