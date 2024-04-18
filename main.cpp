@@ -40,6 +40,10 @@ void Find_token_cycle(long long fg_id);
 void check_vh_type();
 void cycle_entry();
 void Get_cycle_intodb();
+int Check_DublicateID(long long id_chk);
+int Check_DublicateID_cycle(long long id_chk);
+int Check_Exit(long long otp_chk);
+int Check_Exit_cycle(long long otp_chk);
 ///Main Function Starts Here.......///
 
 int optn;
@@ -189,27 +193,83 @@ void Entry()
     cout<<"\t\tEnter Student ID:";
     cin>>ID;
     cin.ignore();
-    cout<<"\t\tEnter Vehicle Number:";
-    getline(cin,v_num);
-    srand(time(0));
-    otp_main=rand()+119 + rand();
-    cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
-    vh_count_total++;
-    cout<<"\t\tYou Are Ready to Park Your Car.....";
-    Get_data_intodb();
-    Sleep(5000);
+    //cout<<"\t\t"<<Check_DublicateID(ID)<<endl;
+    if(Check_DublicateID(ID)==0)
+    {
+        cout<<"\t\tEnter Vehicle Number:";
+        getline(cin,v_num);
+        srand(time(0));
+        otp_main=rand()+119 + rand();
+        cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
+        vh_count_total++;
+        cout<<"\t\tYou Are Ready to Park Your Car.....";
+        Get_data_intodb();
+        Sleep(5000);
+    }
+    else
+    {
+        system("cls");
+        cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout<<"\t\tYou Have Already Parked Your Car !!";
+        Sleep(2000);
+    }
 }
 void Exit()
 {
     system("cls");
     cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
     cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+    cout<<"\t\tEnter your Vehicle Type\n\n\n";
+    cout<<"\t\t1. Bike/Car\n";
+    cout<<"\t\t2. Bi-Cycle\n";
+    cout<<"\t\t>";
+    int ch_otpn;
+    cin>>ch_otpn;
+    if(ch_otpn==1)
+    {
+        system("cls");
+        cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
 
-    long long otp_to_out;
-    cout<<"\t\tEnter Your OTP:";
-    cin>>otp_to_out;
-    cout<<"\t\t Your Token : "<<otp_to_out<<endl;
-    Sleep(2000);
+        long long otp_to_out;
+        cout<<"\t\tEnter Your OTP:";
+        cin>>otp_to_out;
+        if(Check_Exit(otp_to_out))
+        {
+            cout<<"\t\tYour Vehicle is Ready to Go Outside\n";
+            cout<<"\t\tThanks For Using Our Service";
+        }
+        else
+        {
+            cout<<"\t\tVehicle Not Found !!!\n";
+        }
+    }
+    else if(ch_otpn==2)
+    {
+        system("cls");
+        cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+
+        long long otp_to_out;
+        cout<<"\t\tEnter Your OTP:";
+        cin>>otp_to_out;
+        if(Check_Exit_cycle(otp_to_out))
+        {
+            cout<<"\t\tYour Cycle is Ready to Go Outside\n";
+            cout<<"\t\tThanks For Using Our Service";
+        }
+        else
+        {
+            cout<<"\t\tVehicle Not Found !!!\n";
+        };
+    }
+    else
+    {
+        cout<<"\t\tInvalid Selection !!!";
+        Sleep(2000);
+    }
+    Sleep(3000);
 
 }
 void Wrong_Number_as_Input()
@@ -323,7 +383,7 @@ void Forgot_Token()
         system("cls");
         cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
         cout<<"\t\t\t\t\t    Parking Management System\n\n\n\n";
-         long long fg_id;
+        long long fg_id;
         cout<<"\t\tEnter Student ID :";
         cin>>fg_id;
         Find_token_cycle(fg_id);
@@ -420,13 +480,25 @@ void cycle_entry()
     cout<<"\t\tEnter Student ID:";
     cin>>ID;
     cin.ignore();
-    srand(time(0));
-    otp_main=rand()+12 + rand();
-    cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
-    vh_count_total++;
-    cout<<"\t\tYou Are Ready to Park Your Cycle.....";
-    Get_cycle_intodb();
-    Sleep(5000);
+    if(!Check_DublicateID_cycle(ID))
+    {
+        srand(time(0));
+        otp_main=rand()+12 + rand();
+        cout<<"\t\tYour OTP Is : "<<otp_main<<"\n";
+        vh_count_total++;
+        cout<<"\t\tYou Are Ready to Park Your Cycle.....";
+        Get_cycle_intodb();
+        Sleep(5000);
+    }
+    else
+    {
+        system("cls");
+        cout<<"\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout<<"\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout<<"\t\tYou Have Already Parked Your Cycle !!";
+        Sleep(2000);
+    }
+
 }
 void Get_cycle_intodb()
 {
@@ -450,5 +522,105 @@ void create_Table_2()
     if(res!=SQLITE_OK)
     {
         cout<<"Error !!"<<sqlite3_errmsg(db_obj);
+    }
+}
+int Check_DublicateID(long long id_chk)
+{
+    const char* sql = "SELECT id FROM entry WHERE id = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        sqlite3_bind_int64(stmt, 1, id_chk);
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+        {
+            sqlite3_finalize(stmt);
+            return 1;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            return 0;
+        }
+
+
+    }
+}
+int Check_DublicateID_cycle(long long id_chk)
+{
+    const char* sql = "SELECT id FROM cycle WHERE id = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        sqlite3_bind_int64(stmt, 1, id_chk);
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+        {
+            sqlite3_finalize(stmt);
+            return 1;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            return 0;
+        }
+
+
+    }
+}
+int Check_Exit(long long otp_chk)
+{
+    const char* sql = "SELECT id FROM entry WHERE token = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        sqlite3_bind_int64(stmt, 1, otp_chk);
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+        {
+            sqlite3_finalize(stmt);
+            return 1;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            return 0;
+        }
+    }
+}
+int Check_Exit_cycle(long long otp_chk)
+{
+    const char* sql = "SELECT id FROM cycle WHERE token = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        sqlite3_bind_int64(stmt, 1, otp_chk);
+        res = sqlite3_step(stmt);
+        if (res == SQLITE_ROW)
+        {
+            sqlite3_finalize(stmt);
+            return 1;
+        }
+        else
+        {
+            sqlite3_finalize(stmt);
+            return 0;
+        }
     }
 }
