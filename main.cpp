@@ -44,6 +44,8 @@ int Check_DublicateID(long long id_chk);
 int Check_DublicateID_cycle(long long id_chk);
 int Check_Exit(long long otp_chk);
 int Check_Exit_cycle(long long otp_chk);
+void Exit_Confirm(long long token);
+void Exit_Confirm_cycle(long long token);
 /// Main Function Starts Here.......///
 
 int optn;
@@ -236,12 +238,12 @@ void Exit()
         cin >> otp_to_out;
         if (Check_Exit(otp_to_out))
         {
-            cout << "\t\tYour Vehicle is Ready to Go Outside\n";
+            Exit_Confirm(otp_to_out);
             cout << "\t\tThanks For Using Our Service";
         }
         else
         {
-            cout << "\t\tVehicle Not Found !!!\n";
+            cout << "\t\tVehicle Not Found !!!";
         }
     }
     else if (ch_otpn == 2)
@@ -255,12 +257,12 @@ void Exit()
         cin >> otp_to_out;
         if (Check_Exit_cycle(otp_to_out))
         {
-            cout << "\t\tYour Cycle is Ready to Go Outside\n";
+            Exit_Confirm_cycle(otp_to_out);
             cout << "\t\tThanks For Using Our Service";
         }
         else
         {
-            cout << "\t\tVehicle Not Found !!!\n";
+            cout << "\t\tVehicle Not Found !!!";
         };
     }
     else
@@ -616,3 +618,49 @@ int Check_Exit_cycle(long long otp_chk)
         }
     }
 }
+void Exit_Confirm(long long token)
+{
+    const char *sql = "DELETE FROM entry WHERE token = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    sqlite3_bind_int64(stmt, 1, token);
+    res = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res == SQLITE_OK)
+    {
+            system("cls");
+            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+            cout << "\t\tError !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+            system("cls");
+            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+            cout<<"\t\tYou Are Ready to Exit !!\n";
+    }
+}
+void Exit_Confirm_cycle(long long token)
+{
+    const char *sql = "DELETE FROM cycle WHERE token = ?";
+    res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
+    sqlite3_bind_int64(stmt, 1, token);
+    res = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res == SQLITE_OK)
+    {
+
+            system("cls");
+            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+            cout << "\t\tError !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+            system("cls");
+            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+            cout<<"\t\tYou Are Ready to Exit !!\n";
+    }
+}
+
