@@ -120,7 +120,14 @@ void Connection_check()
 }
 void Create_Table()
 {
-    res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS entry(car_num VARCHAR(100),id INT ,token INT);", -1, &stmt, NULL);
+    res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS car(car_num VARCHAR(100),id INT ,token INT);", -1, &stmt, NULL);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !!" << sqlite3_errmsg(db_obj);
+    }
+    res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS montr_car(car_num VARCHAR(100),id INT ,token INT);", -1, &stmt, NULL);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     if (res != SQLITE_OK)
@@ -286,7 +293,17 @@ void Get_data_intodb()
 {
     /// -------------------------------------------------------
 
-    res = sqlite3_prepare_v2(db_obj, "INSERT INTO entry(car_num,id,token) VALUES(?,?,?);", -1, &stmt, NULL);
+    res = sqlite3_prepare_v2(db_obj, "INSERT INTO car(car_num,id,token) VALUES(?,?,?);", -1, &stmt, NULL);
+    sqlite3_bind_text(stmt, 1, v_num.c_str(), v_num.length(), SQLITE_TRANSIENT);
+    sqlite3_bind_int64(stmt, 2, ID);
+    sqlite3_bind_int(stmt, 3, otp_main);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !!" << sqlite3_errmsg(db_obj);
+    }
+    res = sqlite3_prepare_v2(db_obj, "INSERT INTO montr_car(car_num,id,token) VALUES(?,?,?);", -1, &stmt, NULL);
     sqlite3_bind_text(stmt, 1, v_num.c_str(), v_num.length(), SQLITE_TRANSIENT);
     sqlite3_bind_int64(stmt, 2, ID);
     sqlite3_bind_int(stmt, 3, otp_main);
@@ -304,7 +321,7 @@ void Get_data_intodb()
 }
 void Check_For_Vehicle(string vh_num_check, long long st_otp_check)
 {
-    const char *sql = "SELECT car_num , id FROM entry WHERE car_num = ? AND token = ?";
+    const char *sql = "SELECT car_num , id FROM car WHERE car_num = ? AND token = ?";
     res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
     if (res != SQLITE_OK)
     {
@@ -396,7 +413,7 @@ void Forgot_Token()
 }
 void Find_token(string fg_vh_name, long long fg_id)
 {
-    const char *sql = "SELECT car_num , token FROM entry WHERE car_num = ? AND id = ?";
+    const char *sql = "SELECT car_num , token FROM car WHERE car_num = ? AND id = ?";
     res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
     if (res != SQLITE_OK)
     {
@@ -509,6 +526,15 @@ void Get_cycle_intodb()
     {
         cout << "Error !!" << sqlite3_errmsg(db_obj);
     }
+    res = sqlite3_prepare_v2(db_obj, "INSERT INTO montr_cyc(id,token) VALUES(?,?);", -1, &stmt, NULL);
+    sqlite3_bind_int64(stmt, 1, ID);
+    sqlite3_bind_int(stmt, 2, otp_main);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !!" << sqlite3_errmsg(db_obj);
+    }
     otp_main = -1;
     ID = -1;
 }
@@ -521,10 +547,17 @@ void create_Table_2()
     {
         cout << "Error !!" << sqlite3_errmsg(db_obj);
     }
+     res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS montr_cyc(car_num VARCHAR(100),id INT ,token INT);", -1, &stmt, NULL);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !!" << sqlite3_errmsg(db_obj);
+    }
 }
 int Check_DublicateID(long long id_chk)
 {
-    const char *sql = "SELECT id FROM entry WHERE id = ?";
+    const char *sql = "SELECT id FROM car WHERE id = ?";
     res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
     if (res != SQLITE_OK)
     {
@@ -572,7 +605,7 @@ int Check_DublicateID_cycle(long long id_chk)
 }
 int Check_Exit(long long otp_chk)
 {
-    const char *sql = "SELECT id FROM entry WHERE token = ?";
+    const char *sql = "SELECT id FROM car WHERE token = ?";
     res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
     if (res != SQLITE_OK)
     {
@@ -620,7 +653,7 @@ int Check_Exit_cycle(long long otp_chk)
 }
 void Exit_Confirm(long long token)
 {
-    const char *sql = "DELETE FROM entry WHERE token = ?";
+    const char *sql = "DELETE FROM car WHERE token = ?";
     res = sqlite3_prepare_v2(db_obj, sql, -1, &stmt, NULL);
     sqlite3_bind_int64(stmt, 1, token);
     res = sqlite3_step(stmt);
@@ -663,4 +696,3 @@ void Exit_Confirm_cycle(long long token)
             cout<<"\t\tYou Are Ready to Exit !!\n";
     }
 }
-
