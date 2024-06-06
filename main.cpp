@@ -12,6 +12,7 @@
 using namespace std;
 
 /// Database Files ///
+// Miel
 
 sqlite3 *db_obj;
 sqlite3_stmt *stmt;
