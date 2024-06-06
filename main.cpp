@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
 #include <cstdlib>
+#include <conio.h>
 #include <iomanip>
 #include <time.h>
 #include <unistd.h>
@@ -21,11 +22,13 @@ string v_num;
 long long otp_main;
 int vh_count_total = 0;
 
+
 /// Function Declaration ///
 
 void Connection_check();
 void Create_Table();
 void create_Table_2();
+void create_lg();
 int Get_intput();
 void Find_Vehicle();
 void Entry();
@@ -46,6 +49,14 @@ int Check_Exit(long long otp_chk);
 int Check_Exit_cycle(long long otp_chk);
 void Exit_Confirm(long long token);
 void Exit_Confirm_cycle(long long token);
+void Auth();
+int get_auth(string usr,string pw);
+void user_side();
+void user_side_show();
+void proctor_side();
+void wrong_auth();
+void show_all();
+void show_current();
 /// Main Function Starts Here.......///
 
 int optn;
@@ -53,53 +64,10 @@ int main()
 {
     // system("COLOR ");
     Connection_check();
-    while (1)
+    while(1)
     {
-        optn = Get_intput();
-        if (optn == 1)
-        {
-            check_vh_type();
-        }
-        else if (optn == 2)
-        {
-            Exit();
-        }
-        else if (optn == 3)
-        {
-            Find_Vehicle();
-        }
-        else if (optn == 4)
-        {
-            Forgot_Token();
-            Sleep(4000);
-        }
-        else if (optn == 5) /// Git-hub link Visit
-        {
-#ifdef _WIN32
-            system("start https://github.com/anas20023/Parking-Management-System-For-BUBT");
-#elif __linux__
-            system("xdg-open https://github.com/anas20023/Parking-Management-System-For-BUBT");
-#else
-            cout << "Unsupported platform" << endl;
-#endif
-            system("cls");
-        }
-        else if (optn == 6)
-        {
-            system("cls");
-            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
-            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
-            cout << "\t\tThanks for using Our Services";
-            Sleep(5000);
-            sqlite3_close(db_obj);
-            break;
-        }
-        else /// Wrong Input
-        {
-            Wrong_Number_as_Input();
-        }
+        Auth();
     }
-
     sqlite3_close(db_obj);
     return 0;
 }
@@ -112,6 +80,7 @@ void Connection_check()
         // cout<<"DB Connected !!\n";
         Create_Table();
         create_Table_2();
+        create_lg();
     }
     else
     {
@@ -188,7 +157,7 @@ void Find_Vehicle()
     else
     {
         cout << "\t\tInvalid Selection !!!";
-        Sleep(2000);
+        // Sleep(2000);
     }
     Sleep(5000);
 }
@@ -222,6 +191,7 @@ void Entry()
         cout << "\t\tYou Have Already Parked Your Car !!";
         Sleep(2000);
     }
+
 }
 void Exit()
 {
@@ -275,9 +245,10 @@ void Exit()
     else
     {
         cout << "\t\tInvalid Selection !!!";
-        Sleep(2000);
+        //Sleep(2000);
     }
     Sleep(3000);
+
 }
 void Wrong_Number_as_Input()
 {
@@ -547,7 +518,17 @@ void create_Table_2()
     {
         cout << "Error !!" << sqlite3_errmsg(db_obj);
     }
-     res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS montr_cyc(car_num VARCHAR(100),id INT ,token INT);", -1, &stmt, NULL);
+    res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS montr_cyc(car_num VARCHAR(100),id INT ,token INT);", -1, &stmt, NULL);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !!" << sqlite3_errmsg(db_obj);
+    }
+}
+void create_lg()
+{
+    res = sqlite3_prepare_v2(db_obj, "CREATE TABLE IF NOT EXISTS ad_lg(usr_name VARCHAR(32) ,pw VARCHAR(32));", -1, &stmt, NULL);
     sqlite3_step(stmt);
     sqlite3_finalize(stmt);
     if (res != SQLITE_OK)
@@ -660,17 +641,17 @@ void Exit_Confirm(long long token)
     sqlite3_finalize(stmt);
     if (res == SQLITE_OK)
     {
-            system("cls");
-            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
-            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
-            cout << "\t\tError !! " << sqlite3_errmsg(db_obj);
+        system("cls");
+        cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout << "\t\tError !! " << sqlite3_errmsg(db_obj);
     }
     else
     {
-            system("cls");
-            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
-            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
-            cout<<"\t\tYou Are Ready to Exit !!\n";
+        system("cls");
+        cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout<<"\t\tYou Are Ready to Exit !!\n";
     }
 }
 void Exit_Confirm_cycle(long long token)
@@ -683,17 +664,339 @@ void Exit_Confirm_cycle(long long token)
     if (res == SQLITE_OK)
     {
 
-            system("cls");
-            cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
-            cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
-            cout << "\t\tError !! " << sqlite3_errmsg(db_obj);
+        system("cls");
+        cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout << "\t\tError !! " << sqlite3_errmsg(db_obj);
     }
     else
     {
+        system("cls");
+        cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout<<"\t\tYou Are Ready to Exit !!\n";
+    }
+}
+void Auth()
+{
+    system("cls");
+    cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+    cout << "\t\t\t\t\t   Administration Dashboard\n\n\n\n";
+    cout << "\t\t 1.Proctor Login\n";
+    cout << "\t\t 2.User Login\n";
+    cout << "\t\t 3.Exit\n\n\n";
+    cout << "\t\t >";
+    int lg;
+    cin >> lg;
+    cin.ignore();
+    if (lg <= 0 || lg > 3)
+    {
+        cout << "\t\t Wrong Option !";
+        Sleep(2000);
+        system("cls");
+        Auth();
+    }
+    else if (lg == 2)
+    {
+        user_side_show();
+    }
+    else if(lg==1)
+    {
+        system("cls");
+        cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+        cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+        cout << "\t\t\t\t\t   Proctorial Dashboard\n\n\n\n";
+        cout << "\t\t Enter Username:";
+        string usrname;
+        //getline(cin, usrname);
+        cin>>usrname;
+        string pw_str;
+        cout << "\t\t Enter Password:";
+        char ch;
+        while ((ch = _getch()) != '\r')
+        {
+            cout << '*';
+            pw_str += ch;
+        }
+        int cnt = get_auth(usrname, pw_str);
+        if (cnt == 1)
+        {
+            proctor_side();
+        }
+        else if( cnt==-1)
+        {
+            cout<<"\t\t\t Database Error\n";
+            Sleep(3000);
+        }
+        else
+        {
+            wrong_auth();
+        }
+    }
+    else if(lg==3)
+    {
+        exit(0);
+    }
+}
+int get_auth(string usr, string pw)
+{
+    string sql = "SELECT usr_name FROM ad_lg WHERE usr_name = ? AND pw = ?";
+    res = sqlite3_prepare_v2(db_obj, sql.c_str(), -1, &stmt, NULL);
+
+    if (res != SQLITE_OK)
+    {
+        cout << "Error preparing SQL statement: " << sqlite3_errmsg(db_obj) << endl;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    sqlite3_bind_text(stmt, 1, usr.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, pw.c_str(), -1, SQLITE_TRANSIENT);
+
+    res = sqlite3_step(stmt);
+    if (res == SQLITE_ROW)
+    {
+        sqlite3_finalize(stmt);
+        return 1;
+    }
+    else if (res == SQLITE_DONE)
+    {
+        sqlite3_finalize(stmt);
+        return 0;
+    }
+    else
+    {
+        cout << "Error executing SQL statement: " << sqlite3_errmsg(db_obj) << endl;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+}
+void user_side()
+{
+    while (1)
+    {
+        optn = Get_intput();
+        if (optn == 1)
+        {
+            check_vh_type();
+        }
+        else if (optn == 2)
+        {
+            Exit();
+        }
+        else if (optn == 3)
+        {
+            Find_Vehicle();
+        }
+        else if (optn == 4)
+        {
+            Forgot_Token();
+            Sleep(4000);
+        }
+        else if (optn == 5) /// Git-hub link Visit
+        {
+#ifdef _WIN32
+            system("start https://github.com/anas20023/Parking-Management-System-For-BUBT");
+#elif __linux__
+            system("xdg-open https://github.com/anas20023/Parking-Management-System-For-BUBT");
+#else
+            cout << "Unsupported platform" << endl;
+#endif
+            system("cls");
+        }
+        else if (optn == 6)
+        {
             system("cls");
             cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
             cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
-            cout<<"\t\tYou Are Ready to Exit !!\n";
+            cout << "\t\tThanks for using Our Services";
+            Sleep(5000);
+            //sqlite3_close(db_obj);
+            break;
+        }
+        else /// Wrong Input
+        {
+            Wrong_Number_as_Input();
+        }
+    }
+
+}
+void proctor_side()
+{
+    system("cls");
+    cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+    cout << "\t\t\t\t\t   Proctorial Dashboard\n\n\n\n";
+    cout << "\t\t 1. View Current Parking\n";
+    cout << "\t\t 2. View Log\n";
+    cout << "\t\t >";
+    int tlt;
+    cin>>tlt;
+    cin.ignore();
+    if(tlt==1)
+    {
+        show_current();
+    }
+    else if(tlt==2)
+    {
+        show_all();
     }
 }
+void wrong_auth()
+{
+    system("cls");
+    cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+    cout << "\t\t\t\t\t   Administration Dashboard\n\n\n\n";
+    cout << "\t\t Wrong Username or Password !!";
+    Sleep(3000);
+    Auth();
+}
+void user_side_show()
+{
+    system("cls");
+    cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout << "\t\t\t\t\t   Parking Management System\n\n\n\n";
+    cout << "\t\t\t\t\t   User Dashboard\n\n\n\n";
+    cout << "\t\t Enter Username:";
+    string usrname;
+    //getline(cin, usrname);
+    cin>>usrname;
+    string pw_str;
+    cout << "\t\t Enter Password:";
+    char ch;
+    while ((ch = _getch()) != '\r')
+    {
+        cout << '*';
+        pw_str += ch;
+    }
+    int cnt = get_auth(usrname, pw_str);
+    if (cnt == 1)
+    {
+        user_side();
+    }
+    else if( cnt==-1)
+    {
+        cout<<"\t\t\t Database Error\n";
+        Sleep(3000);
+    }
+    else
+    {
+        wrong_auth();
+    }
+}
+void show_all()
+{
+    system("cls");
+    cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout << "\t\t\t\t\t   Parking Management System\n\n\n";
+    cout << "\t\t\t\t\t\tAll Parking Log\n\n\n\n\n\n";
+    cout << "\t\t\t\t\t\tCar/Bike\n\n\n\n";
+    const char *sql111 = "SELECT * FROM montr_car";
+    res = sqlite3_prepare_v2(db_obj, sql111, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        cout << "\n\t\t| " << setw(15) << left << "Vehicle Number" << "  | " << setw(10) << left << "Student ID" << "   | " << setw(10) << left << "   OTP" << "|" << endl;
+        cout << "\t\t| " << setfill('-') << setw(16) << "" << " | " << setw(11) << "" << " | " << setw(11) << "" << " |" << setfill(' ') << endl;
 
+        while ((res = sqlite3_step(stmt)) == SQLITE_ROW)
+        {
+            cout << "\t\t| " << setw(15) << left << sqlite3_column_text(stmt, 0) << " | " << setw(10) << left << sqlite3_column_int64(stmt, 1) << " | " << setw(10) << left << sqlite3_column_int64(stmt, 2) << " |" << endl;
+        }
+
+        if (res != SQLITE_DONE)
+        {
+            cout << "Error fetching data: " << sqlite3_errmsg(db_obj);
+        }
+
+        sqlite3_finalize(stmt);
+    }
+    cout << "\n\n\n\n\t\t\t\t\t\tCycle\n\n\n";
+    const char *sql2 = "SELECT * FROM montr_cyc";
+    res = sqlite3_prepare_v2(db_obj, sql2, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        cout << "\n\t\t| " << setw(10) << left << "Student ID" << "   | " << setw(10) << left << "   OTP" << "|" << endl;
+        cout << "\t\t| " << setfill('-') << setw(11) << "" << " | " << setw(11) << "" << " |" << setfill(' ') << endl;
+
+        while ((res = sqlite3_step(stmt)) == SQLITE_ROW)
+        {
+            cout << "\t\t| " << setw(10) << left << sqlite3_column_int64(stmt, 1) << " | " << setw(10) << left << sqlite3_column_int64(stmt, 2) << " |" << endl;
+        }
+
+
+        if (res != SQLITE_DONE)
+        {
+            cout << "Error fetching data: " << sqlite3_errmsg(db_obj);
+        }
+
+        sqlite3_finalize(stmt);
+    }
+    Sleep(10000);
+}
+void show_current()
+{
+    system("cls");
+    cout << "\n\t\t\t\tBangladesh University of Business and Technology\n";
+    cout << "\t\t\t\t\t   Parking Management System\n\n\n";
+    cout << "\t\t\t\t\t\tCurrent Parking Log\n\n\n\n\n\n";
+    cout << "\t\t\t\t\t\tCar/Bike\n\n\n\n";
+    const char *sql121 = "SELECT * FROM car";
+    res = sqlite3_prepare_v2(db_obj, sql121, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        cout << "\n\t\t| " << setw(15) << left << "Vehicle Number" << "  | " << setw(10) << left << "Student ID" << "   | " << setw(10) << left << "   OTP" << "|" << endl;
+        cout << "\t\t| " << setfill('-') << setw(16) << "" << " | " << setw(11) << "" << " | " << setw(11) << "" << " |" << setfill(' ') << endl;
+
+        while ((res = sqlite3_step(stmt)) == SQLITE_ROW)
+        {
+            cout << "\t\t| " << setw(15) << left << sqlite3_column_text(stmt, 0) << " | " << setw(10) << left << sqlite3_column_int64(stmt, 1) << " | " << setw(10) << left << sqlite3_column_int64(stmt, 2) << " |" << endl;
+        }
+
+        if (res != SQLITE_DONE)
+        {
+            cout << "Error fetching data: " << sqlite3_errmsg(db_obj);
+        }
+
+        sqlite3_finalize(stmt);
+    }
+    cout << "\n\n\n\n\t\t\t\t\t\tCycle\n\n\n";
+    const char *sql22 = "SELECT * FROM cyc";
+    res = sqlite3_prepare_v2(db_obj, sql22, -1, &stmt, NULL);
+    if (res != SQLITE_OK)
+    {
+        cout << "Error !! " << sqlite3_errmsg(db_obj);
+    }
+    else
+    {
+        cout << "\n\t\t| " << setw(10) << left << "Student ID" << "   | " << setw(10) << left << "   OTP" << "|" << endl;
+        cout << "\t\t| " << setfill('-') << setw(11) << "" << " | " << setw(11) << "" << " |" << setfill(' ') << endl;
+
+        while ((res = sqlite3_step(stmt)) == SQLITE_ROW)
+        {
+            cout << "\t\t| " << setw(10) << left << sqlite3_column_int64(stmt, 1) << " | " << setw(10) << left << sqlite3_column_int64(stmt, 2) << " |" << endl;
+        }
+
+
+        if (res != SQLITE_DONE)
+        {
+            cout << "Error fetching data: " << sqlite3_errmsg(db_obj);
+        }
+
+        sqlite3_finalize(stmt);
+    }
+    Sleep(10000);
+}
