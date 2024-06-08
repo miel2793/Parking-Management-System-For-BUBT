@@ -3,3 +3,5 @@ obj
 data.db
 .vscode
 .vs
+sqlite3.h
+sqlite3ext.h
